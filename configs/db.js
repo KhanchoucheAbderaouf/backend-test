@@ -23,7 +23,6 @@ function createSchema(schema) {
 
 function createModel(name, schemaStructor) {
     let schema = createSchema(schemaStructor);
-    schema.plugin(require("mongoose-autopopulate"));
     return mongoose.model(name, schema);
 }
 
