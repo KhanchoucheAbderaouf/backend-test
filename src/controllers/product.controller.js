@@ -1,17 +1,8 @@
 const productService = require("../services/product.service");
-const { createProductValidation } = require("../utils/bodyValidation.util");
-var ObjectId = require("mongoose").Types.ObjectId;
 
 module.exports = {
     createProduct: async (req, res) => {
         try {
-            //verify the body using joi
-            const bodyVerification = await createProductValidation(req.body);
-            if (bodyVerification.error) {
-                return res.status(400).json({
-                    error: bodyVerification.error,
-                });
-            }
             //create the product
             const product = await productService.create(req.body);
             //in case an error happened
@@ -28,13 +19,6 @@ module.exports = {
     },
     updateProduct: async (req, res) => {
         try {
-            //verify the body using joi
-            const bodyVerification = await createProductValidation(req.body);
-            if (bodyVerification.error) {
-                return res.status(400).json({
-                    error: bodyVerification.error,
-                });
-            }
             //update the product
             const product = await productService.update(
                 req.params.id,
@@ -54,18 +38,6 @@ module.exports = {
     },
     addCategoryToProduct: async (req, res) => {
         try {
-            //verify the body
-            if (!req.body.category) {
-                return res
-                    .status(400)
-                    .json({ error: "The category id is missing in the body" });
-            }
-            //verify that the category id is in a valid format
-            if (!ObjectId.isValid(req.body.category)) {
-                return res
-                    .status(400)
-                    .json({ error: "The category id is wrong" });
-            }
             const product = await productService.addCategory(
                 req.params.id,
                 req.body.category
@@ -84,22 +56,42 @@ module.exports = {
     },
     deleteCategoryFromProduct: async (req, res) => {
         try {
-            //verify the body
-            if (!req.body.category) {
-                return res
-                    .status(400)
-                    .json({ error: "The category id is missing in the body" });
-            }
-            //verify that the category id is in a valid format
-            if (!ObjectId.isValid(req.body.category)) {
-                return res
-                    .status(400)
-                    .json({ error: "The category id is wrong" });
-            }
             const product = await productService.deleteCategory(
                 req.params.id,
                 req.body.category
             );
+            //in case an error happened
+            if (product.error) {
+                return res
+                    .status(product.status)
+                    .json({ error: product.error });
+            }
+            //return the value of the created product
+            return res.status(200).json(product);
+        } catch (error) {
+            return res.status(500).json({ error: error });
+        }
+    },
+    findProductByCategory: async (req, res) => {
+        try {
+            let { size, page, order, direction, category } = req.query;
+            let pagination = {};
+            if (size) {
+                pagination.limit = size;
+                pagination.skip = (page && page > 0 ? page - 1 : 0) * size;
+            }
+            if (order) {
+                pagination.sort = {};
+                pagination.sort[order] = direction ? parseInt(direction) : 1;
+            }
+            //verify that the category id is in a valid format
+            if (!ObjectId.isValid(category)) {
+                return res
+                    .status(400)
+                    .json({ error: "The category id is wrong" });
+            }
+            //create the product
+            const product = await productService.findByCategory(category);
             //in case an error happened
             if (product.error) {
                 return res

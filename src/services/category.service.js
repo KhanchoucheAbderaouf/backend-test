@@ -54,7 +54,10 @@ module.exports = {
             }
             //verify that the subCategory is not already in the category
             if (category.subs.indexOf(subCategory) !== -1) {
-                return { error: "The subCategory is already added", status: 400 };
+                return {
+                    error: "The subCategory is already added",
+                    status: 400,
+                };
             }
             //add the subCategory to the category and update the category
             category.subs.push(subCategory);

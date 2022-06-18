@@ -102,4 +102,24 @@ module.exports = {
             return { error: error, status: 500 };
         }
     },
+    findByCategory: async (category) => {
+        try {
+            const categoryDB = await Category.findOne({ _id: category });
+            const products = Product.find({
+                $or: [
+                    { categories: categoryDB._id },
+                    { categories: { $in: categoryDB.subs } },
+                ],
+            });
+            if (!products) {
+                return {
+                    error: "Error on finding the products",
+                    status: 500,
+                };
+            }
+            return products;
+        } catch (error) {
+            return res.status(500).json({ error: error });
+        }
+    },
 };
