@@ -1,4 +1,5 @@
 const productService = require("../services/product.service");
+var ObjectId = require("mongoose").Types.ObjectId;
 
 module.exports = {
     createProduct: async (req, res) => {
@@ -74,16 +75,7 @@ module.exports = {
     },
     findProductByCategory: async (req, res) => {
         try {
-            let { size, page, order, direction, category } = req.query;
-            let pagination = {};
-            if (size) {
-                pagination.limit = size;
-                pagination.skip = (page && page > 0 ? page - 1 : 0) * size;
-            }
-            if (order) {
-                pagination.sort = {};
-                pagination.sort[order] = direction ? parseInt(direction) : 1;
-            }
+            let { size, category } = req.query;
             //verify that the category id is in a valid format
             if (!ObjectId.isValid(category)) {
                 return res
@@ -97,6 +89,9 @@ module.exports = {
                 return res
                     .status(product.status)
                     .json({ error: product.error });
+            }
+            if (size && size > 0) {
+                return res.status(200).json(product.slice(0, size));
             }
             //return the value of the created product
             return res.status(200).json(product);

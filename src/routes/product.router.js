@@ -12,6 +12,7 @@ const {
     ProductValidation,
     addDeleteCategoryValidation,
 } = require("../middlewares/bodyValidation.middleware");
+
 //Products router
 router.get("/", findAll(Product));
 router.get("/category", findProductByCategory);
