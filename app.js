@@ -18,6 +18,10 @@ app.get("/", (req, res) => {
 //DB Connection
 require("./configs/db").connection();
 
+// //Routes
+const routes = require("./src/routes/index");
+app.use("/", routes);
+
 //Run the server
 const port = process.env.PORT || 4000;
 
