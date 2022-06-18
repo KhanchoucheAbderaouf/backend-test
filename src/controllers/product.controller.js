@@ -90,10 +90,11 @@ module.exports = {
                     .status(product.status)
                     .json({ error: product.error });
             }
+            //in case a size is defined to limit the find we slice the first {size} elements
             if (size && size > 0) {
                 return res.status(200).json(product.slice(0, size));
             }
-            //return the value of the created product
+            //return all products if the size is not defined
             return res.status(200).json(product);
         } catch (error) {
             return res.status(500).json({ error: error });

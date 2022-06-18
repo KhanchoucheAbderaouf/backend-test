@@ -1,3 +1,4 @@
+// categories router
 const router = require("express").Router();
 const { Category } = require("../models");
 const {
@@ -6,13 +7,17 @@ const {
     addSubCategoryToCategory,
     deleteSubCategoryToCategory,
 } = require("../controllers/category.controller");
+
+//crud functions import
 const { findAll, findOne, remove } = require("../services/crud.service");
+
+//verification middlewares
 const {
     CategoryValidation,
     addDeleteSubCategoryValidation,
 } = require("../middlewares/bodyValidation.middleware");
 
-//Categories router
+//Categories routes
 router.get("/", findAll(Category));
 router.get("/:id", findOne(Category));
 router.post("/", CategoryValidation, createCategory);

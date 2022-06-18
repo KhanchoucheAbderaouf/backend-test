@@ -1,3 +1,4 @@
+//product model
 const { createModel } = require("../../configs/db");
 const mongoose = require("mongoose");
 

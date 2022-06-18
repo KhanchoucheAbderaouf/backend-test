@@ -1,3 +1,4 @@
+//models index
 const { Product } = require("./product");
 const { Category } = require("./category");
 

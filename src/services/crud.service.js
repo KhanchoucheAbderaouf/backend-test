@@ -1,7 +1,9 @@
+// global crud service for a standard cruds
 module.exports = {
     findAll: (Model) => {
         return (req, res) => {
             try {
+                //in case we wanna add a pagination that is optional
                 let { size, page, order, direction } = req.query;
                 let pagination = {};
                 if (size) {

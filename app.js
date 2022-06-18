@@ -9,6 +9,7 @@ app.use(compression());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+//index endpoint just to verify that the api is running
 app.get("/", (req, res) => {
     return res.json({
         name: "Backend test Biapi",
@@ -18,7 +19,7 @@ app.get("/", (req, res) => {
 //DB Connection
 require("./configs/db").connection();
 
-// //Routes
+//Import Routes
 const routes = require("./src/routes/index");
 app.use("/", routes);
 

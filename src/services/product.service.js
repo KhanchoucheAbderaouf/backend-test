@@ -3,17 +3,20 @@ const { Product, Category } = require("../models");
 module.exports = {
     create: async (body) => {
         try {
-            //verify that the name doesn't already exists
+            //verify that the name doesn't already exists in db
             if (await Product.findOne({ name: body.name })) {
                 return { error: "Product name already exists", status: 400 };
             }
+            //crete the product
             const product = await Product.create(body);
+            //in case of an error in the creation
             if (!product) {
                 return {
                     error: "Error on creating the product",
                     status: 500,
                 };
             }
+            //if success
             return product;
         } catch (error) {
             return { error: error, status: 500 };
@@ -21,11 +24,12 @@ module.exports = {
     },
     update: async (id, body) => {
         try {
+            //verify that the product to update exists in db
             const product = await Product.findOne({ _id: id });
             if (!product) {
                 return { error: "Product not found", status: 404 };
             }
-            //verify that the name doesn't already exists
+            //verify that the name doesn't already exists in db
             if (
                 await Product.findOne({
                     name: body.name,
@@ -34,7 +38,9 @@ module.exports = {
             ) {
                 return { error: "Product name already exists", status: 400 };
             }
+            //update the product
             await Product.updateOne({ _id: product._id }, body);
+            //if success
             return { message: "Product updated succefully" };
         } catch (error) {
             return { error: error, status: 500 };
@@ -43,12 +49,12 @@ module.exports = {
     addCategory: async (id, category) => {
         try {
             const product = await Product.findOne({ _id: id });
-            //verify that the product exists
+            //verify that the product exists in db
             if (!product) {
                 return { error: "Product not found", status: 404 };
             }
             const categoryDB = await Category.findOne({ _id: category });
-            //verify that the category exists
+            //verify that the category exists in db
             if (!categoryDB) {
                 return { error: "Category not found", status: 400 };
             }
@@ -72,16 +78,16 @@ module.exports = {
     deleteCategory: async (id, category) => {
         try {
             const product = await Product.findOne({ _id: id });
-            //verify that the product exists
+            //verify that the product exists in db
             if (!product) {
                 return { error: "Product not found", status: 404 };
             }
             const categoryDB = await Category.findOne({ _id: category });
-            //verify that the category exists
+            //verify that the category exists in db
             if (!categoryDB) {
                 return { error: "Category not found", status: 400 };
             }
-            //verify that the category is not already in the product
+            //verify that the category is in the product
             const categoryIndex = product.categories.indexOf(category);
             if (categoryIndex === -1) {
                 return {
@@ -89,7 +95,7 @@ module.exports = {
                     status: 400,
                 };
             }
-            //add the category to the product and update the product
+            //delete the category from the product and update the product
             product.categories.splice(categoryIndex, 1);
             await Product.updateOne(
                 {
@@ -104,7 +110,9 @@ module.exports = {
     },
     findByCategory: async (category) => {
         try {
+            //find first the category that we are looking for
             const categoryDB = await Category.findOne({ _id: category });
+            //use the operator or to ge the products with the defined category id and it's subs
             const products = Product.find({
                 $or: [
                     { categories: categoryDB._id },
