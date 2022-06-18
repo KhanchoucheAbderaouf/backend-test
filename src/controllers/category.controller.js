@@ -66,7 +66,6 @@ module.exports = {
                     .status(400)
                     .json({ error: "The sub category id is wrong" });
             }
-            console.log("here")
             const category = await categoryService.addSubCategory(
                 req.params.id,
                 req.body.category
