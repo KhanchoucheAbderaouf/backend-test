@@ -127,7 +127,7 @@ module.exports = {
             }
             return products;
         } catch (error) {
-            return res.status(500).json({ error: error });
+            return { error: error, status: 500 };
         }
     },
 };
